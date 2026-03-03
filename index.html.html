@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shelly's Gym · Sayantika's Forge</title>
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at 10% 20%, #141b29, #0b0f17);
+      color: #f0f3fa;
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* industrial / gym texture overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none" /><path d="M20 20 L30 20 L30 30 L20 30 Z M70 50 L80 50 L80 60 L70 60Z" fill="%23333" opacity="0.08"/><circle cx="45" cy="75" r="2" fill="%23444" opacity="0.1"/><circle cx="85" cy="15" r="3" fill="%23555" opacity="0.1"/></svg>');
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app {
+      max-width: 1500px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ----- header / member badge ----- */
+    .member-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10, 20, 30, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      border-radius: 48px;
+      padding: 0.9rem 2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,215,0,0.1) inset;
+    }
+
+    .avatar-gold {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .avatar-circle {
+      width: 65px;
+      height: 65px;
+      background: linear-gradient(135deg, #f5b01b, #ca9626);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0b0f17;
+      box-shadow: 0 0 20px #f9c74f;
+      border: 2px solid #ffd966;
+    }
+
+    .name-tag h2 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, #fff4d0, #ffe28c);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1.2;
+    }
+
+    .name-tag p {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-weight: 300;
+      color: #b3c7e5;
+    }
+
+    .gym-badge {
+      background: #1f2a3f;
+      padding: 0.6rem 1.5rem;
+      border-radius: 40px;
+      border-left: 4px solid #ffb347;
+      font-weight: 600;
+      box-shadow: 0 0 15px #ffb34733;
+      text-align: right;
+    }
+
+    .gym-badge i {
+      color: #ffb347;
+      margin-right: 8px;
+    }
+
+    .gym-badge span {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #ffdb9d;
+    }
+
+    /* ----- button panel (artistic) ----- */
+    .action-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 2.8rem;
+      justify-content: center;
+    }
+
+    .gym-btn {
+      background: rgba(25, 35, 50, 0.8);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 200, 100, 0.25);
+      color: #ececec;
+      font-weight: 500;
+      padding: 0.8rem 1.8rem;
+      border-radius: 40px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    .gym-btn i {
+      color: #fdbb4c;
+      font-size: 1.1rem;
+    }
+
+    .gym-btn:hover {
+      background: #2f3e5a;
+      border-color: #fdbb4c;
+      transform: scale(1.05);
+      box-shadow: 0 0 18px #fdbb4c77;
+    }
+
+    .gym-btn.today {
+      background: #c6922b;
+      border-color: #ffdb9d;
+      color: #0a0f16;
+      font-weight: 700;
+    }
+
+    .gym-btn.today i {
+      color: #000;
+    }
+
+    .gym-btn.reset {
+      background: #282e3a;
+      border-color: #6e7e9e;
+    }
+
+    /* ----- workout grid (cards) ----- */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 2rem 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .workout-card {
+      background: rgba(20, 28, 40, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 215, 0, 0.15);
+      border-radius: 38px;
+      padding: 1.5rem 1.3rem 1.8rem;
+      transition: 0.25s ease;
+      box-shadow: 0 25px 35px -10px #000000cc, 0 0 0 1px #2f3e4e inset;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .workout-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, #ffb347, #ffd966, #bd7f2c);
+      opacity: 0.6;
+    }
+
+    .workout-card.highlight {
+      border: 2px solid #fdbb4c;
+      box-shadow: 0 0 0 3px rgba(253, 187, 76, 0.5), 0 25px 40px -5px black;
+      transform: scale(1.02);
+      transition: 0.2s;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed #fdbb4c55;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.3rem;
+    }
+
+    .day-name {
+      font-size: 1.9rem;
+      font-weight: 800;
+      background: linear-gradient(to bottom, #fffbf0, #dbc48b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+
+    .cardio-badge {
+      background: #232f42;
+      border-radius: 60px;
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #ffdcaa;
+      border: 1px solid #dba642;
+      white-space: nowrap;
+      margin-left: 10px;
+    }
+
+    .section-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin: 1.2rem 0 0.5rem 0;
+      color: #fdbb4c;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-left: 4px solid #ffb347;
+      padding-left: 10px;
+    }
+
+    .exercise-list {
+      list-style: none;
+      margin-bottom: 0.2rem;
+    }
+
+    .exercise-list li {
+      display: flex;
+      align-items: baseline;
+      padding: 0.45rem 0;
+      border-bottom: 1px dotted rgba(255, 200, 100, 0.15);
+      font-size: 0.95rem;
+    }
+
+    .exercise-list li i {
+      width: 26px;
+      color: #ffb347;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .exercise-name {
+      flex: 1;
+      font-weight: 400;
+      color: #e7ecf5;
+    }
+
+    .exercise-set {
+      font-weight: 600;
+      background: #1d2a39;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      color: #ffda8b;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+      border: 1px solid #917b4b;
+    }
+
+    /* quote popup (artistic) */
+    .quote-popup {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #1e1e2e;
+      backdrop-filter: blur(16px);
+      padding: 1rem 2rem;
+      border-radius: 60px;
+      border-left: 8px solid #f9c74f;
+      color: #fff6d9;
+      font-weight: 500;
+      box-shadow: 0 20px 40px black;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transform: translateY(200%);
+      transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+      z-index: 999;
+      max-width: 350px;
+    }
+
+    .quote-popup.show {
+      transform: translateY(0);
+    }
+
+    .quote-popup i {
+      font-size: 2rem;
+      color: #f9c74f;
+    }
+
+    /* responsiveness */
+    @media (max-width: 700px) {
+      .member-header {
+        flex-direction: column;
+        align-items: start;
+        border-radius: 30px;
+      }
+      .gym-badge {
+        margin-top: 0.8rem;
+        width: 100%;
+      }
+      .action-panel .gym-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #151e2a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #fdbb4c;
+      border-radius: 20px;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <!-- header with member info -->
+  <div class="member-header">
+    <div class="avatar-gold">
+      <div class="avatar-circle">SD</div>
+      <div class="name-tag">
+        <h2>SAYANTIKA DEY</h2>
+        <p><i class="fas fa-id-card"></i> ID: 1303 • <i class="fas fa-dumbbell"></i> Shelly's Gym</p>
+      </div>
+    </div>
+    <div class="gym-badge">
+      <i class="fas fa-crown"></i> <span>GOLD CIRCLE</span> <br>
+      <small>member since 2024</small>
+    </div>
+  </div>
+
+  <!-- button panel with creative controls -->
+  <div class="action-panel">
+    <button class="gym-btn" id="btnMon"><i class="fas fa-calendar-day"></i> Mon</button>
+    <button class="gym-btn" id="btnTue"><i class="fas fa-calendar-day"></i> Tue</button>
+    <button class="gym-btn" id="btnWed"><i class="fas fa-calendar-day"></i> Wed</button>
+    <button class="gym-btn" id="btnThu"><i class="fas fa-calendar-day"></i> Thu</button>
+    <button class="gym-btn" id="btnFri"><i class="fas fa-calendar-day"></i> Fri</button>
+    <button class="gym-btn" id="btnSat"><i class="fas fa-calendar-day"></i> Sat</button>
+    <button class="gym-btn today" id="btnToday"><i class="fas fa-bolt"></i> TODAY</button>
+    <button class="gym-btn reset" id="btnReset"><i class="fas fa-undo-alt"></i> RESET</button>
+    <button class="gym-btn" id="btnMotivate"><i class="fas fa-fire"></i> MOTIVATION</button>
+  </div>
+
+  <!-- workout cards injected by js -->
+  <div id="cardsContainer" class="cards-grid"></div>
+
+  <!-- floating quote popup (artistic) -->
+  <div id="quotePopup" class="quote-popup">
+    <i class="fas fa-quote-right"></i>
+    <span id="quoteText">”No excuses, just results.”</span>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ---------- WORKOUT DATA (exact from user) ----------
+    const workoutData = [
+      { day: "Monday", cardio: "30 mins cardio", sections: [
+          { title: "Chest", exercises: [ ["Seated press", "15 x 3"], ["Incline machine press", "14, 12, 10"], ["Incline close dumbbell press", "14, 12, 10"], ["Pec dec fly", "15 x 3"] ] },
+          { title: "Triceps", exercises: [ ["Bench dips", "10 x 3"], ["Cable push down", "12, 10, 8"], ["Reverse push down", "12, 10, 8"], ["Dumbbell kickback", "10 x 3"] ] }
+      ]},
+      { day: "Tuesday", cardio: "30 mins cardio", sections: [
+          { title: "Back", exercises: [ ["Lat pull down", "15 x 3"], ["Reverse pull down", "14, 12, 10"], ["Seated row", "14, 12, 10"] ] },
+          { title: "Biceps", exercises: [ ["Cable curl", "10 x 3"], ["Hammer curl (rope)", "12, 10, 8"], ["Wrist curl", "15 x 3"], ["Plank", "3 minutes"] ] }
+      ]},
+      { day: "Wednesday", cardio: "Cardio + Lower Abs", sections: [
+          { title: "Lower Abs Circuit", exercises: [ ["Jumping jack", "50 x 3"], ["High knees", "50 x 3"], ["Mountain climber", "30+30 x 3"], ["Inchworm", "15 x 3"], ["Leg raises", "20 x 3"], ["Reverse crunches", "20 x 3"], ["Plank", "3 minutes"] ] }
+      ]},
+      { day: "Thursday", cardio: "20 mins cardio", sections: [
+          { title: "Shoulder", exercises: [ ["Shoulder machine press", "16, 14, 12"], ["Front dumbbell raises", "16, 14, 12"], ["Side lateral raise", "16, 14, 12"], ["Dumbbell shrugs", "10 x 3"] ] },
+          { title: "Wrist", exercises: [ ["Wrist curl with dumbbell", "15 x 3"], ["Reverse curl", "15 x 3"], ["Natai", "3 x 3"] ] }
+      ]},
+      { day: "Friday", cardio: "20 mins cardio", sections: [
+          { title: "Chest", exercises: [ ["Push up", "10 x 3"], ["Dumbbell press", "12, 10, 10"], ["Incline close dumbbell press", "14, 12, 10"], ["Pec dec fly", "15 x 3"] ] },
+          { title: "Upper ABS", exercises: [ ["Sit ups", "30 x 3"], ["Half sit ups", "30 x 3"], ["Plank", "2 minutes x 2"], ["Twister", "1 minute"] ] }
+      ]},
+      { day: "Saturday", cardio: "Leg Day", sections: [
+          { title: "Legs", exercises: [ ["Squat", "20 x 3"], ["Leg extension", "15 x 3"], ["Leg press", "15 x 3"], ["Sumo squat", "10 x 3"], ["Lunges", "10-10 x 3"], ["Calf raises", "20 x 3"] ] }
+      ]}
+    ];
+
+    // DOM elements
+    const container = document.getElementById('cardsContainer');
+    const quoteEl = document.getElementById('quotePopup');
+    const quoteText = document.getElementById('quoteText');
+
+    // ---------- render all cards ----------
+    function renderCards() {
+      container.innerHTML = '';
+      workoutData.forEach(dayObj => {
+        const card = document.createElement('div');
+        card.className = 'workout-card';
+        card.setAttribute('data-day', dayObj.day);
+
+        // header with day and cardio
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'card-header';
+        headerDiv.innerHTML = `
+          <span class="day-name">${dayObj.day}</span>
+          <span class="cardio-badge"><i class="far fa-clock"></i> ${dayObj.cardio}</span>
+        `;
+        card.appendChild(headerDiv);
+
+        // sections (chest, triceps etc)
+        dayObj.sections.forEach(section => {
+          const secTitle = document.createElement('div');
+          secTitle.className = 'section-title';
+          secTitle.innerHTML = `<i class="fas fa-dumbbell"></i> ${section.title}`;
+          card.appendChild(secTitle);
+
+          const list = document.createElement('ul');
+          list.className = 'exercise-list';
+
+          section.exercises.forEach(ex => {
+            const li = document.createElement('li');
+            li.innerHTML = `<i class="fas fa-angle-right"></i><span class="exercise-name">${ex[0]}</span><span class="exercise-set">${ex[1]}</span>`;
+            list.appendChild(li);
+          });
+          card.appendChild(list);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    // utility: remove highlight from all cards
+    function clearHighlights() {
+      document.querySelectorAll('.workout-card').forEach(c => c.classList.remove('highlight'));
+    }
+
+    // highlight a specific day card (if exists) and smooth scroll
+    function highlightDay(dayName) {
+      clearHighlights();
+      const targetCard = Array.from(document.querySelectorAll('.workout-card')).find(card => card.getAttribute('data-day') === dayName);
+      if (targetCard) {
+        targetCard.classList.add('highlight');
+        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+      } else {
+        // maybe Sunday: no highlight
+        showQuote("It's rest day — recover like a beast 💪");
+      }
+    }
+
+    // motivational quotes array (gym style)
+    const quotes = [
+      "Train insane or remain the same.",
+      "You're only one workout away from a good mood.",
+      "Push yourself, because no one else is going to do it for you.",
+      "Success starts with self-discipline.",
+      "Sore today, strong tomorrow.",
+      "The only bad workout is the one that didn't happen.",
+      "FOCUS. You've got a goal – you want it, you take it.",
+      "Your body can stand almost anything. It’s your mind you have to convince.",
+      "Embrace the grind.",
+      "Fitness is not about being better than someone else, but being better than you used to be."
+    ];
+
+    function showQuote(message) {
+      quoteText.innerText = `”${message}”`;
+      quoteEl.classList.add('show');
+      setTimeout(() => {
+        quoteEl.classList.remove('show');
+      }, 2800);
+    }
+
+    function showRandomQuote() {
+      const randomIndex = Math.floor(Math.random() * quotes.length);
+      quoteText.innerText = `”${quotes[randomIndex]}”`;
+      quoteEl.classList.add('show');
+      setTimeout(() => {
+        quoteEl.classList.remove('show');
+      }, 3000);
+    }
+
+    // ----- set up button listeners -----
+    function initButtons() {
+      // individual day buttons
+      document.getElementById('btnMon').addEventListener('click', () => { highlightDay('Monday'); showQuote('Monday = chest & triceps 🔥'); });
+      document.getElementById('btnTue').addEventListener('click', () => { highlightDay('Tuesday'); showQuote('Back & biceps — pull hard!'); });
+      document.getElementById('btnWed').addEventListener('click', () => { highlightDay('Wednesday'); showQuote('Core & cardio: feel the burn'); });
+      document.getElementById('btnThu').addEventListener('click', () => { highlightDay('Thursday'); showQuote('Shoulders & wrists — cap delts!'); });
+      document.getElementById('btnFri').addEventListener('click', () => { highlightDay('Friday'); showQuote('Chest & upper abs. last push of the week'); });
+      document.getElementById('btnSat').addEventListener('click', () => { highlightDay('Saturday'); showQuote('Leg day: no excuses 🏋️'); });
+
+      // today button: highlight based on actual day
+      document.getElementById('btnToday').addEventListener('click', () => {
+        const todayIndex = new Date().getDay(); // 0 sun .. 6 sat
+        const dayMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const todayName = dayMap[todayIndex];
+        if (todayName === 'Sunday') {
+          clearHighlights();
+          showQuote('Sunday = rest & meal prep! 🔋');
+        } else {
+          highlightDay(todayName);
+        }
+      });
+
+      // reset highlights
+      document.getElementById('btnReset').addEventListener('click', () => {
+        clearHighlights();
+        showQuote('Highlights cleared. Stay focused!');
+      });
+
+      // motivation random quote
+      document.getElementById('btnMotivate').addEventListener('click', showRandomQuote);
+    }
+
+    // additional: double click on any card shows mini quote
+    function attachCardDoubleClick() {
+      container.addEventListener('dblclick', (e) => {
+        const card = e.target.closest('.workout-card');
+        if (card) {
+          const day = card.getAttribute('data-day');
+          showQuote(`Go get 'em, it's ${day}!`);
+        }
+      });
+    }
+
+    // initialise
+    renderCards();
+    initButtons();
+    attachCardDoubleClick();
+
+    // small extra: today highlight on page load (optional)
+    // (but we'll let user click; if you want auto highlight uncomment below)
+    // setTimeout(() => {
+    //   const todayIdx = new Date().getDay();
+    //   if (todayIdx !== 0) document.getElementById('btnToday').click();
+    // }, 200);
+  })();
+</script>
+
+<!-- subtle additional effect: background barbell icon (artistic) -->
+<div style="position:fixed; bottom:20px; left:20px; opacity:0.1; pointer-events:none; font-size:5rem; color:#fdbb4c; z-index:1;">
+  <i class="fas fa-dumbbell"></i>
+</div>
+</body>
+</html>
