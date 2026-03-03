@@ -1,0 +1,8 @@
+{
+  "name": "Sayantika Routines",
+  "short_name": "Routines",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff"
+}
